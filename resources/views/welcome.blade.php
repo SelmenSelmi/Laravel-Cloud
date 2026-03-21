@@ -589,6 +589,46 @@
                 grid-template-columns: 1fr 1fr;
             }
         }
+        /* Toast styles */
+        .toast {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            background: linear-gradient(180deg, #fbfffd, #e6fbf3);
+            border: 1px solid #9de4c9;
+            color: #0f6848;
+            padding: 14px 18px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(9,37,63,0.12);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(14px);
+            opacity: 0;
+            transition: transform 0.28s cubic-bezier(.22,.9,.31,1), opacity 0.28s ease;
+            z-index: 9999;
+            max-width: calc(100% - 48px);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast .toast-msg {
+            font-size: 0.95rem;
+        }
+
+        .toast .toast-close {
+            background: transparent;
+            border: 0;
+            font-size: 18px;
+            line-height: 1;
+            color: inherit;
+            cursor: pointer;
+            padding: 6px;
+        }
+
     </style>
 </head>
 <body>
@@ -857,5 +897,37 @@
             <p>Licensed Plumbing Services | Residential & Commercial | USA</p>
         </div>
     </footer>
+    <!-- Toast markup -->
+    <div id="toast" class="toast" role="status" aria-live="polite" style="display: none;">
+        <div class="toast-msg" id="toast-message"></div>
+        <button class="toast-close" id="toast-close" aria-label="Dismiss">×</button>
+    </div>
+
+    <script>
+        (function(){
+            const toastText = @json(session('status'));
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-message');
+            const closeBtn = document.getElementById('toast-close');
+
+            if (!toast) return;
+
+            function hideToast(){
+                toast.classList.remove('show');
+                setTimeout(()=>{ toast.style.display = 'none'; }, 280);
+            }
+
+            if (toastText) {
+                msgEl.textContent = toastText;
+                toast.style.display = 'flex';
+                // trigger animation
+                setTimeout(()=> toast.classList.add('show'), 10);
+
+                closeBtn.addEventListener('click', hideToast);
+                // auto-hide after 5s
+                setTimeout(hideToast, 5000);
+            }
+        })();
+    </script>
 </body>
 </html>
